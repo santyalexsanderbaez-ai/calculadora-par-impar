@@ -29,6 +29,22 @@ FUNCIONES = {
     "sign": sp.sign,
 }
 
+EJEMPLOS = {
+    "Escribir mi propia señal": "",
+    "Mixta: t^2 + sin(t) + exp(t)": "t^2 + sin(t) + exp(t)",
+    "Seno: sin(t)": "sin(t)",
+    "Coseno: cos(t)": "cos(t)",
+    "Seno + coseno: sin(t) + cos(t)": "sin(t) + cos(t)",
+    "Polinomio: t^3 + t^2": "t^3 + t^2",
+    "Exponencial: exp(t)": "exp(t)",
+    "Exponencial causal: exp(-t)*u(t)": "exp(-t)*u(t)",
+    "Escalón unitario: u(t)": "u(t)",
+    "Rampa: t*u(t)": "t*u(t)",
+    "Pulso: u(t) - u(t-2)": "u(t) - u(t-2)",
+    "Valor absoluto + lineal: abs(t) + t": "abs(t) + t",
+    "Seno amortiguado: exp(-t)*sin(t)*u(t)": "exp(-t)*sin(t)*u(t)",
+}
+
 
 def descomponer(expresion):
     x = parse_expr(
@@ -59,11 +75,27 @@ def a_numerico(expr, valores):
     return np.real(np.broadcast_to(f(valores), valores.shape))
 
 
+def cargar_ejemplo():
+    elegido = EJEMPLOS[st.session_state["ejemplo"]]
+    if elegido:
+        st.session_state["expresion"] = elegido
+
+
 st.set_page_config(page_title="Componentes par e impar", page_icon="📈")
+
+if "expresion" not in st.session_state:
+    st.session_state["expresion"] = "t^2 + sin(t) + exp(t)"
+
 st.title("Calculadora de componentes par e impar")
 st.latex(r"x_e(t)=\frac{x(t)+x(-t)}{2}\qquad x_o(t)=\frac{x(t)-x(-t)}{2}")
 
-expresion = st.text_input("Señal x(t)", value="t^2 + sin(t) + exp(t)")
+st.selectbox(
+    "Señales predeterminadas",
+    list(EJEMPLOS.keys()),
+    key="ejemplo",
+    on_change=cargar_ejemplo,
+)
+expresion = st.text_input("Señal x(t)", key="expresion")
 col1, col2 = st.columns(2)
 inicio = col1.number_input("Inicio", value=-5.0)
 fin = col2.number_input("Fin", value=5.0)
