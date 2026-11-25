@@ -2,5 +2,6 @@ sympy
 streamlit
 numpy
 pandas
+plotly
 flask
 flask-cors
